@@ -40,14 +40,14 @@ const Header = () => {
 
         <div className="flex justify-center rounded-3xl p-2  items-center border border-[#EFEEEF] shadow-md">
           <div className="px-3">Anywhere</div>
-          <div className="h-8 border-l border-black mx-2"></div>
+          <div className="h-8 border-l border-x-2 rounded-md border-black opacity-30 mx-2"></div>
 
           <div className="px-3">Any Week</div>
-          <div className="h-8 border-l border-black mx-2"></div>
+          <div className="h-8 border-l border-x-2 rounded-md border-black opacity-30 mx-2"></div>
 
           <div className="px-3">Add guest</div>
         
-         <BiSearchAlt2 className='h-7 w-7 bg-indigo-500 rounded-full p-1.5'  />
+         <BiSearchAlt2 className='h-7 w-7 bg-indigo-500 rounded-full p-1.5 text-white'  />
        
            
          
@@ -58,7 +58,7 @@ const Header = () => {
         <IoIosOptions className="w-6 h-8 text-slate-600 "/>
           <Link to={user?'/account':'/login'} className='flex items-center'>
           <FaUserCircle className="w-8 h-10 text text-slate-500 "/>
-          {user?(<div className='p-1'>{user.name}</div>):(<div/>)}
+          {user?(<div className='font-light m-1 p-1'>{user.name}</div>):(<div/>)}
           </Link>
           
         </div>

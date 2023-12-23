@@ -19,7 +19,7 @@ const { setShowNav } = useContext(UserContext);
         info?.photos?.length > 0 && info.photos.map((photo) => 
       
           <div key={photo} className='w-[50vw]  object-contain mt-2'>
-            <img src={"http://localhost:4000/uploads/" + photo} />
+            <img src={photo} />
           </div>
         
       )

@@ -28,7 +28,7 @@ setBookings(response.data);
     <div className=' bg-slate-700 w-48'>
         {
           booking.place.photos.length>0 &&(
-            <img className='object-cover  h-full' src={'http://localHost:4000/uploads/'+booking.place.photos[0]}/>
+            <img className='object-cover  h-full ' src={booking.place.photos[0]}/>
           )
         }
     </div>

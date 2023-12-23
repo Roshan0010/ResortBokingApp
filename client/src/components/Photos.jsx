@@ -15,7 +15,7 @@ const Photos = ({info,showAllPhotos ,setShowAllPhotos}) => {
     <div className='  object-cover bg-slate-900'>
     {info.photos?.[0] &&(
        
-        <img  src={"http://localhost:4000/uploads/"+info.photos?.[0]} 
+        <img  src={info.photos?.[0]} 
         onClick={()=>setShowAllPhotos(true)}
           className='aspect-square object-cover cursor-pointer'/>  
     )
@@ -24,13 +24,13 @@ const Photos = ({info,showAllPhotos ,setShowAllPhotos}) => {
     </div>
     <div className='grid '>
     {info.photos?.[1] &&(
-        <img src={"http://localhost:4000/uploads/"+info.photos?.[1]} onClick={()=>setShowAllPhotos(true)}
+        <img src={info.photos?.[1]} onClick={()=>setShowAllPhotos(true)}
           className='aspect-square object-cover cursor-pointer'/>  
     )
     }
     <div className='overflow-hidden'>
     {info.photos?.[2] &&(
-        <img src={"http://localhost:4000/uploads/"+info.photos?.[2]} onClick={()=>setShowAllPhotos(true)}
+        <img src={info.photos?.[2]} onClick={()=>setShowAllPhotos(true)}
           className='aspect-square object-cover cursor-pointer'/>  
     )
     }
@@ -39,13 +39,13 @@ const Photos = ({info,showAllPhotos ,setShowAllPhotos}) => {
     </div>
     <div className='grid '>
     {info.photos?.[3] &&(
-        <img src={"http://localhost:4000/uploads/"+info.photos?.[3]} onClick={()=>setShowAllPhotos(true)}
+        <img src={info.photos?.[3]} onClick={()=>setShowAllPhotos(true)}
           className='aspect-square object-cover cursor-pointer'/>  
     )
     }
     <div className='overflow-hidden'>
     {info.photos?.[4] &&(
-        <img src={"http://localhost:4000/uploads/"+info.photos?.[4]} onClick={()=>setShowAllPhotos(true)}
+        <img src={info.photos?.[4]} onClick={()=>setShowAllPhotos(true)}
           className='aspect-square object-cover cursor-pointer'/>  
     )
     }

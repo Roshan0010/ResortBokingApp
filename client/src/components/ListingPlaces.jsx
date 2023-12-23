@@ -8,7 +8,7 @@ const ListingPlaces = ({place}) => {
     <div className='w-32 h-32 flex  shrink-0 p-1 '>
         {
           place.photos.length>0 &&(
-            <img className='object-cover' src={'http://localHost:4000/uploads/'+place.photos[0]}/>
+            <img className='object-cover' src={place.photos[0]}/>
           )
         }
     </div>

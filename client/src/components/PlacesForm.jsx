@@ -75,7 +75,8 @@ axios.get('/places/'+id).then(response=>{
          const {data:filenames}=res;
          // Assuming setAddedPhotos is a state setter function
          setAddedPhotos(prev => [...prev, ...filenames]);
-       }).catch(error => {
+         console.log(addedPhotos);
+       }).catch((error) => {
          console.error('Error uploading photos:', error);
        });
      }
@@ -86,7 +87,7 @@ axios.get('/places/'+id).then(response=>{
      e.preventDefault();
        const {data:filename}=await axios.post('/upload-by-link',{link:photoLink})
        setAddedPhotos(prev=>{
-        return [...prev,filename];
+        return [...prev,filename.secure_url];
        });
        setPhotoLink('');
      }
@@ -169,7 +170,7 @@ axios.get('/places/'+id).then(response=>{
             <div className='grid grid-cols-3 gap-2 lg:grid-cols-4 md:grid-col-4'>
   {addedPhotos.length > 0 && addedPhotos.map((link) => (
     <div className='w-55 h-40 relative' key={link}>
-      <img className='rounded-2xl w-full h-full object-cover' src={'http://localhost:4000/uploads/' + link} alt='' />
+      <img className='rounded-2xl w-full h-full object-cover' src={link} alt='' />
       <BsTrash3 onClick={()=>removePhoto(link)} className='absolute bottom-1 right-1 text-white bg-black p-2 w-8 h-8 bg-opacity-50 rounded-2xl cursor-pointer'/>
       {/* star  wala funcinality */}
       {

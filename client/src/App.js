@@ -9,9 +9,10 @@ import axios from 'axios';
 import {  UserContextProvider } from './UserContex';
 import Account from './pages/Account';
 import PlacePage from './pages/PlacePage';
+import { BaseUrl } from './config';
 
 
-axios.defaults.baseURL = 'http://127.0.0.1:4000';
+axios.defaults.baseURL = BaseUrl;
 axios.defaults.withCredentials=true;
 function App() {
   return (

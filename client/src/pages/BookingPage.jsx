@@ -81,7 +81,7 @@ if(!booking){
    <div className=' flex justify-center'>
    <div className='bg-indigo-500 p-2 text-white rounded-2xl hover:bg-indigo-600 lg:w-40 h-28 md:w-40 flex flex-col justify-center gap-2 items-center sm:w-full'>
     <p className=''>Total Price</p>
-    <p className='text-xl md:text-2xl lg:text-3xl '>{booking.price}</p>
+    <p className='text-xl md:text-2xl lg:text-3xl '>${booking.price}</p>
    </div>
   
    </div>

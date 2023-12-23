@@ -10,15 +10,15 @@ const imageDownloader = require('image-downloader');
 const multer = require('multer');
 const fs = require('fs');
 const Booking = require('./models/Booking');
-
+require('dotenv').config();
 const cloudinary = require('cloudinary').v2; // Import Cloudinary
 // Configure Cloudinary (replace 'your_cloud_name', 'your_api_key', and 'your_api_secret' with your credentials)
 cloudinary.config({
-  cloud_name: 'ddi6pgru6',
-  api_key: '591212516396522',
-  api_secret: 'VeO4H_xiEaUKw-xL6LpX3TPYOD4',
-  folder: 'Distant' 
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
 });
+
 
 
 app.use('/uploads',express.static(__dirname+'/uploads'))
@@ -26,7 +26,7 @@ app.use('/uploads',express.static(__dirname+'/uploads'))
 require('./config/database').connect();
 
 const bcryptSalt = bcrypt.genSaltSync(10);
-require('dotenv').config();
+
 
 app.use(express.json());
 app.use(cookieParser());
@@ -174,6 +174,7 @@ app.post('/upload', upload.array('photos', 100), async (req, res) => {
 
     res.json(uploadedFiles);
   } catch (error) {
+    console.log(error)
     res.status(500).json({ success: false, message: 'Failed to upload files to Cloudinary' });
   }
 });

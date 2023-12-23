@@ -11,6 +11,15 @@ const multer = require('multer');
 const fs = require('fs');
 const Booking = require('./models/Booking');
 
+const cloudinary = require('cloudinary').v2; // Import Cloudinary
+// Configure Cloudinary (replace 'your_cloud_name', 'your_api_key', and 'your_api_secret' with your credentials)
+cloudinary.config({
+  cloud_name: 'ddi6pgru6',
+  api_key: '591212516396522',
+  api_secret: 'VeO4H_xiEaUKw-xL6LpX3TPYOD4',
+  folder: 'Distant' 
+});
+
 
 app.use('/uploads',express.static(__dirname+'/uploads'))
 
@@ -24,7 +33,7 @@ app.use(cookieParser());
 app.use(
   cors({
     credentials: true,
-    origin:'http://127.0.0.1:3000',
+    origin:'http://127.0.0.1:3000', //dekh ke
   })
 );
 
@@ -126,38 +135,49 @@ app.post('/logout', (req, res) => {
 
 app.post('/upload-by-link', async (req, res) => {
   const { link } = req.body;
+
   if (!link) {
-    res.status(400).json({ success: false, message: 'The link is required' });
-    return;
+    return res.status(400).json({ success: false, message: 'The link is required' });
   }
 
-  const newName = 'photo'+Date.now() + '.jpg';
   try {
-    await imageDownloader.image({
-      url: link,
-      dest: __dirname + '/uploads/' + newName,
-    });
-    res.json(newName);
+    const newName = 'photo_' + Date.now();
+    const result = await cloudinary.uploader.upload(link, { folder: 'Distant',public_id: newName  });
+    res.json(result);
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Failed to download and save the image' });
+    res.status(500).json({ success: false, message: 'Failed to upload the image to Cloudinary' });
   }
 });
 
 
-const photosMiddleware= multer({dest:'uploads'});
-app.post('/upload',photosMiddleware.array('photos',100),(req,res) => {
-  const uplodedFiles=[];
-for(let i=0;i<req.files.length;i++) {
-  const {path,originalname}=req.files[i];
-  const parts=originalname.split('.');
-  const ext=parts[parts.length-1];
-  const newPath=path +'.'+ext;
-  fs.renameSync(path,newPath);
-  uplodedFiles.push(newPath.replace('uploads/',''));
-}
+// const photosMiddleware= multer({dest:'uploads'});
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
-res.json(uplodedFiles);
-})
+app.post('/upload', upload.array('photos', 100), async (req, res) => {
+  const uploadedFiles = [];
+
+  try {
+    const promises = req.files.map(async (file) => {
+      const newName = 'photo_' + Date.now(); // Generate a new name (you can adjust this naming convention)
+      const dataUri = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
+
+      const result = await cloudinary.uploader.upload(dataUri, {
+        folder: 'Distant',
+        public_id: newName // Set the desired name for the uploaded file
+      });
+
+      uploadedFiles.push(result.secure_url); // Store Cloudinary URL in the array
+    });
+
+    await Promise.all(promises);
+
+    res.json(uploadedFiles);
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to upload files to Cloudinary' });
+  }
+});
+
 
 
 app.post('/places',(req,res) => {

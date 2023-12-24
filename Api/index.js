@@ -33,7 +33,7 @@ app.use(cookieParser());
 app.use(
   cors({
     credentials: true,
-    origin:'http://127.0.0.1:3000', //dekh ke
+    origin:'https://roshan0010.github.io', //dekh ke
   })
 );
 
@@ -122,7 +122,12 @@ app.get('/profile', (req, res) => {
 
 app.post('/logout', (req, res) => {
   try {
-    res.cookie('token','').json(true);
+    res.cookie('token', token, {
+      httpOnly: true, 
+      secure: true, 
+      sameSite: 'none' 
+    })
+.json(true);
   } catch (error) {
     res.status(500).json({
       success:false,

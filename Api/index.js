@@ -33,7 +33,7 @@ app.use(cookieParser());
 app.use(
   cors({
     credentials: true,
-    origin:'https://resort-booking-client.onrender.com,
+    origin:'https://resort-booking-client.onrender.com/,
      // origin:'http://127.0.0.1:3000'
   })
 );

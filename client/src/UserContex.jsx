@@ -7,17 +7,24 @@ export function UserContextProvider({ children }) {
   const [ready,setReady] = useState(false);
   const [showNav,setShowNav] = useState(true);
   useEffect(() => {
-    // if user is empty, try to get user from database
-    if (!user) {
-      axios.get('/profile')
-        .then(({ data }) => {
-          console.log(data);
-          setUser(data);
-          setReady(true);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+    const token = localStorage.getItem('token');
+    console.log(token);
+    
+    if (!user && token) {
+      console.log("here");
+      axios.get('/profile', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then(({ data }) => {
+        console.log(data);
+        setUser(data);
+        setReady(true);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     }
   }, [user]);
   

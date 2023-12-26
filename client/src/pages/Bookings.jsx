@@ -11,7 +11,13 @@ import { FaRegCreditCard } from 'react-icons/fa';
 const Bookings = () => {
 const [bookings,setBookings]=useState([]);
 useEffect(() =>{
-axios.get('/bookings').then((response) =>{
+  const token=localStorage.getItem('token');
+  console.log(token)
+  axios.get('/bookings', {
+    headers: {
+      Authorization:`Bearer ${token}`
+    }
+  }).then((response) =>{
 setBookings(response.data);
 });
 },[]);

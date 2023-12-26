@@ -9,6 +9,7 @@ import { HiOutlineHandThumbUp } from "react-icons/hi2";
 import{AiOutlineStar,AiFillStar} from "react-icons/ai";
 
 import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
 
 
@@ -77,6 +78,7 @@ axios.get('/places/'+id).then(response=>{
          setAddedPhotos(prev => [...prev, ...filenames]);
          console.log(addedPhotos);
        }).catch((error) => {
+        toast.sucess(error.message);
          console.error('Error uploading photos:', error);
        });
      }
@@ -107,8 +109,11 @@ axios.get('/places/'+id).then(response=>{
   }
   else {
     //new
-   
-    await axios.post('/places',placeData);
+   const token=localStorage.getItem('token');
+    await axios.post('/places',placeData,{
+      headers: {
+        Authorization: `Bearer ${token}`
+      }});
   }
 
    

@@ -21,7 +21,11 @@ const BookingPage = () => {
     
     useEffect(() => {
         if (id) {
-          axios.get('/bookings').then((response) => {
+          const token=localStorage.getItem('token');
+          axios.get('/bookings',{
+            headers: {
+              Authorization: `Bearer ${token}`
+            }}).then((response) => {
             const foundBooking = response.data.find(({ _id }) => _id === id);
             if (foundBooking) {
               setBooking(foundBooking);

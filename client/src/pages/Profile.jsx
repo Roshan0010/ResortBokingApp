@@ -1,14 +1,14 @@
 import React, { useContext } from 'react';
 import { UserContext } from '../UserContex';
 import { Navigate, useParams } from 'react-router';
-import axios from 'axios';
+// import axios from 'axios';
 import Places from './Places';
 
 const Profile = () => {
   const { user, setUser, ready } = useContext(UserContext);
 
   async function logout() {
-    await axios.post('/logout');
+    localStorage.removeItem('token');
     setUser(null);
   }
 

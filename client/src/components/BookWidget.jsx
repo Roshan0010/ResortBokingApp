@@ -27,10 +27,14 @@ const BookWidget = ({info}) => {
 
   async function BookingHandeler(e) { 
   e.preventDefault(); 
+  const token=localStorage.getItem('token');
    const obj={checkIn,checkOut,noOfGuest:noOfGuest,name,phone:phNo,place:info._id ,price:noOfDays*info.price};
- const result= await axios.post('/booking',obj);
+ const result= await axios.post('/booking',obj,{
+  headers: {
+    Authorization: `Bearer ${token}`
+  }});
 if(result){
-  navigate(`/account/bookings/${result.data.place}`);
+  navigate(`/account/bookings`);
 }
   console.log(obj);
    }

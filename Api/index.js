@@ -33,9 +33,11 @@ app.use(cookieParser());
 app.use(
   cors({
     credentials: true,
-    origin:'https://roshan0010.github.io', //dekh ke
+    // origin:'https://roshan0010.github.io',
+     origin:'http://127.0.0.1:3000'
   })
 );
+app.set("trust proxy", 1);
 
 app.get('/test', (req, res) => {
   res.json({
@@ -46,13 +48,21 @@ app.get('/test', (req, res) => {
 
 
 function getUserDataFromReq(req){
-
+console.log("here");
+const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+console.log(token);
   return  new Promise((resolve, reject) => {
-    jwt.verify(req.cookies.token, process.env.JWT_SECRET_KEY, {}, async(err, user) => {
-      if(err)throw err;
-      resolve(user);
-  
-    });
+   
+    try {
+      jwt.verify(token, process.env.JWT_SECRET_KEY, {}, async(err, user) => {
+        if(err)throw err;
+        resolve(user);
+      });
+    } catch (error) {
+      console.log("getUserError:",error);
+    }
+    
   });
   
 }
@@ -92,8 +102,8 @@ app.post('/login', async (req, res) => {
             console.log(err);
             throw err;
           }
-          res.cookie('token', token);
-          res.status(200).json(userDoc);
+         
+          res.status(200).json({token,userDoc});
         }
       );
     } else {
@@ -108,35 +118,45 @@ app.post('/login', async (req, res) => {
   }
 });
 
-app.get('/profile', (req, res) => {
-  const { token } = req.cookies;
-  if (token) {
-    jwt.verify(token, process.env.JWT_SECRET_KEY, {}, (err, user) => {
-      if (err) throw err;
-      res.json(user);
-    });
-  } else {
-    res.json(null);
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.sendStatus(401);
   }
+
+  jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decoded) => {
+    if (err) {
+      return res.sendStatus(403); 
+    }
+    req.user = decoded;
+    next(); 
+  });
+};
+
+app.get('/profile', authenticateToken, (req, res) => {
+  res.json(req.user);
 });
 
-app.post('/logout', (req, res) => {
-  try {
-    res.cookie('token', token, {
-      httpOnly: true, 
-      secure: true, 
-      sameSite: 'none' 
-    })
-.json(true);
-  } catch (error) {
-    res.status(500).json({
-      success:false,
-      message: 'not able to logout',
-    });
+// app.post('/logout', (req, res) => {
+//   //
+//   try {
+//     res.cookie('token', token, {
+//       httpOnly: true, 
+//       secure: true, 
+//       sameSite: 'none' 
+//     })
+// .json(true);
+//   } catch (error) {
+//     res.status(500).json({
+//       success:false,
+//       message: 'not able to logout',
+//     });
 
     
-  }
-})
+//   }
+// })
 
 app.post('/upload-by-link', async (req, res) => {
   const { link } = req.body;
@@ -161,7 +181,7 @@ const upload = multer({ storage: storage });
 
 app.post('/upload', upload.array('photos', 100), async (req, res) => {
   const uploadedFiles = [];
-
+  
   try {
     const promises = req.files.map(async (file) => {
       const newName = 'photo_' + Date.now(); // Generate a new name (you can adjust this naming convention)
@@ -180,14 +200,24 @@ app.post('/upload', upload.array('photos', 100), async (req, res) => {
     res.json(uploadedFiles);
   } catch (error) {
     console.log(error)
-    res.status(500).json({ success: false, message: 'Failed to upload files to Cloudinary' });
+    const errMessage=undefined;
+    if(error.message.find('File size too large')){
+      errMessage = 'File size too large'
+    }
+    if(error)
+    res.status(500).json({ success: false, message: errMessage | 'Failed to upload files to Cloudinary' });
   }
 });
 
 
 
 app.post('/places',(req,res) => {
-  const {token}=req.cookies;
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    res.status(500);
+  }
   const {title,address,addedPhotos,
     description,perks,extraInfo,
     checkIn,checkOut,maxGuest,price}=req.body;
@@ -203,8 +233,10 @@ app.post('/places',(req,res) => {
   });
 });
 
-app.get('/user-places', async (req, res) => {
-  const { token } = req.cookies;
+app.get('/user-places',authenticateToken, async (req, res) => {
+  
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {
     res.status(500);
@@ -219,12 +251,18 @@ app.get('/user-places', async (req, res) => {
 });
 
 app.get('/places/:id',async (req, res) => {
+ 
   const {id}=req.params;
   res.json(await Place.findById(id));
 })
 
 app.put('/places/',async (req, res) =>{
-  const {token}=req.cookies;
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    res.status(500);
+  }
   const {title,address,addedPhotos,
    id, description,perks,extraInfo,
     checkIn,checkOut,maxGuest,price}=req.body;
@@ -248,6 +286,7 @@ app.get('/places',async(req, res) => {
 });
 
 app.post('/booking', async(req,res) => {
+ 
   const userData = await getUserDataFromReq(req);
   try{
     const {checkIn,checkOut,noOfGuest,place,name,phone,price}=req.body;
@@ -261,10 +300,16 @@ res.status(500).json({success:false,message:`Book not created successfully `});
 
 });
 //booking are always private so we need to validate
-app.get('/bookings',async(req, res) => {
-const userData=await getUserDataFromReq(req)
 
-res.json(await Booking.find({user:userData.id}).populate('place'));
+app.get('/bookings',async(req, res) => {
+  try {
+    const userData=await getUserDataFromReq(req)
+
+    res.json(await Booking.find({user:userData.id}).populate('place'));
+  } catch (error) {
+    console.log("booking :",error)
+  }
+
 });
 
 

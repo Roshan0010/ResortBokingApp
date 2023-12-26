@@ -18,8 +18,12 @@ const [show,setShow]=useState(true);
   const lastDir=pathname.split('/')[3];
 
   useEffect(()=>{
+    const token=localStorage.getItem('token');
    if(show){
-    axios.get('/user-places').then(({data})=>{
+    axios.get('/user-places',{
+      headers: {
+        Authorization: `Bearer ${token}`
+      }}).then(({data})=>{
       setPlaces(data);
       });
    }

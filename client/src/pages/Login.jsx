@@ -7,24 +7,36 @@ import { UserContext } from '../UserContex';
 const Login = () => {
     const [email, setemail] = useState('');
     const [password, setpassword] = useState('');
-    const [redirect,setredirect]=useState(false);
+    const [redirect,setRedirect]=useState(false);
     const {setUser,user}=useContext(UserContext);
-    async function LoginHandler(e) {
+    // Set Axios interceptor to extract token from response headers
+
+
+    function LoginHandler(e) {
       e.preventDefault();
-      try {
-        const {data}=await axios.post('/login', { email, password });
-        console.log(data);
-        setUser(data);
-        console.log("seting data to login user");
-        console.log(user);
-        toast.success('Login Successful');
-        setredirect(true);
-       
-      } catch (error) {
-        console.log(error);
-        toast.error('Login Failed');
-      }
+      axios
+        .post('/login', { email, password })
+        .then(response => {
+          console.log(response.data);
+          const token = response.data.token;
+          const doc=response.data.userDoc;
+          console.log(token);
+          if (token) {
+            console.log(token);
+            localStorage.setItem('token', token); // Store token in local storage
+          }
+          console.log(doc);
+          setUser(doc);
+          toast.success('Login Successful');
+          setRedirect(true);
+        })
+        .catch(error => {
+          console.log(error);
+          toast.error('Login Failed');
+        });
     }
+    
+
     if(redirect) {
       return <Navigate to={'/'}/>
     }

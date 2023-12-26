@@ -33,8 +33,8 @@ app.use(cookieParser());
 app.use(
   cors({
     credentials: true,
-    // origin:'https://roshan0010.github.io',
-     origin:'http://127.0.0.1:3000'
+    origin:'https://roshan0010.github.io',
+    //  origin:'http://127.0.0.1:3000'
   })
 );
 app.set("trust proxy", 1);

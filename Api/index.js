@@ -33,6 +33,7 @@ app.use(cookieParser());
 app.use(
   cors({
     credentials: true,
+    origin:'https://resort-booking-client.vercel.app/'
   })
 );
 app.set("trust proxy", 1);
